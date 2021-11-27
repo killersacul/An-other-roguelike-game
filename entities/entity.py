@@ -4,11 +4,11 @@ import copy
 import math
 from typing import TYPE_CHECKING, Optional, Tuple, Type, TypeVar, Union
 
-from render_order import RenderOrder
+from engine.render_order import RenderOrder
 
 if TYPE_CHECKING:
     from components.equipment import Equipment
-    from game_map import GameMap
+    from engine.game_map import GameMap
     from components.level import Level
     from components.consumable import Consumable
     from components.ai import BaseAI
@@ -139,7 +139,6 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
-
     ):
         super().__init__(
             x=x,
