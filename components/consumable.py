@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from exceptions import Impossible
 from typing import TYPE_CHECKING, Optional
 
-import actions
-import color
 import components.ai
 import components.inventory
+import config.color as color
+import engine.actions as actions
 from components.base_component import BaseComponent
-from input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
+from engine.exceptions import Impossible
+from engine.input_handlers import AreaRangedAttackHandler, SingleRangedAttackHandler
 
 if TYPE_CHECKING:
-    from entity import Actor, Item
+    from entities.entity import Actor, Item
 
 
 class Consumable(BaseComponent):
@@ -41,9 +41,7 @@ class ConfusionConsumable(Consumable):
         self.number_of_turns = number_of_turns
 
     def get_actions(self, consumer: Actor) -> SingleRangedAttackHandler:
-        self.engine.message_log.add_message(
-            "Select a target location.", color.needs_target
-        )
+        self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return SingleRangedAttackHandler(
             self.engine,
             callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
@@ -65,7 +63,9 @@ class ConfusionConsumable(Consumable):
             color.status_effect_applied,
         )
         target.ai = components.ai.ConfusedEnemy(
-            entity=target, previous_ai=target.ai, turns_remaining=self.number_of_turns,
+            entity=target,
+            previous_ai=target.ai,
+            turns_remaining=self.number_of_turns,
         )
         self.consume()
 
@@ -94,9 +94,7 @@ class FireballDamageConsumable(Consumable):
         self.radius = radius
 
     def get_actions(self, consumer: Actor) -> AreaRangedAttackHandler:
-        self.engine.message_log.add_message(
-            "Select a target location.", color.needs_target
-        )
+        self.engine.message_log.add_message("Select a target location.", color.needs_target)
         return AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,

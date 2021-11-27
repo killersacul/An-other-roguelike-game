@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-import exceptions
 import os
 from typing import TYPE_CHECKING, Callable, Optional, Tuple, Union
 
-import actions
-import color
+import config.color as color
+import engine.actions as actions
+import engine.exceptions as exceptions
 import tcod.event
-from actions import Action, BumpAction, PickupAction, WaitAction
+from engine.actions import Action, BumpAction, PickupAction, WaitAction
 
 if TYPE_CHECKING:
-    from engine import Engine
-    from entity import Item
+    from engine.engine import Engine
+    from entities.entity import Item
 MOVE_KEYS = {
     # Arrow keys.
     tcod.event.K_UP: (0, -1),
@@ -152,7 +152,6 @@ class EventHandler(BaseEventHandler):
 
 
 class AskUserEventHandler(EventHandler):
-
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         if event.sym in {  # Ignore modifier keys.
             tcod.event.K_LSHIFT,
@@ -165,9 +164,7 @@ class AskUserEventHandler(EventHandler):
             return None
         return self.on_exit()
 
-    def ev_mousebuttondown(
-        self, event: tcod.event.MouseButtonDown
-    ) -> Optional[ActionOrHandler]:
+    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[ActionOrHandler]:
         return self.on_exit()
 
     def on_exit(self) -> Optional[ActionOrHandler]:
@@ -201,24 +198,16 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             bg=(0, 0, 0),
         )
 
-        console.print(
-            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}"
-        )
-        console.print(
-            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}"
-        )
+        console.print(x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}")
+        console.print(x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}")
         console.print(
             x=x + 1,
             y=y + 3,
             string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
         )
 
-        console.print(
-            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}"
-        )
-        console.print(
-            x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}"
-        )
+        console.print(x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}")
+        console.print(x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}")
 
 
 class LevelUpEventHandler(AskUserEventHandler):
@@ -281,9 +270,7 @@ class LevelUpEventHandler(AskUserEventHandler):
 
         return super().ev_keydown(event)
 
-    def ev_mousebuttondown(
-        self, event: tcod.event.MouseButtonDown
-    ) -> Optional[ActionOrHandler]:
+    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[ActionOrHandler]:
         """
         Don't allow the player to click to exit the menu, like normal.
         """
@@ -422,9 +409,7 @@ class SelectIndexHandler(AskUserEventHandler):
             return self.on_index_selected(*self.engine.mouse_location)
         return super().ev_keydown(event)
 
-    def ev_mousebuttondown(
-        self, event: tcod.event.MouseButtonDown
-    ) -> Optional[ActionOrHandler]:
+    def ev_mousebuttondown(self, event: tcod.event.MouseButtonDown) -> Optional[ActionOrHandler]:
         """Left click confirms a selection."""
         if self.engine.game_map.in_bounds(*event.tile):
             if event.button == 1:
@@ -444,11 +429,9 @@ class LookHandler(SelectIndexHandler):
 
 
 class SingleRangedAttackHandler(SelectIndexHandler):
-    """ Handles targeting a single enemy. Only the enemy selected will be affected."""
+    """Handles targeting a single enemy. Only the enemy selected will be affected."""
 
-    def __init__(
-        self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
-    ):
+    def __init__(self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]):
         super().__init__(engine)
 
         self.callback = callback
@@ -500,9 +483,7 @@ class MainGameEventHandler(EventHandler):
 
         player = self.engine.player
 
-        if key == tcod.event.K_PERIOD and modifier & (
-            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
-        ):
+        if key == tcod.event.K_PERIOD and modifier & (tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT):
             return actions.TakeStairsAction(player)
 
         if key in MOVE_KEYS:
@@ -529,7 +510,6 @@ class MainGameEventHandler(EventHandler):
 
 
 class GameOverEventHandler(EventHandler):
-
     def on_quit(self) -> None:
         """Handle exiting out of a finished game."""
         if os.path.exists("savegame.sav"):
@@ -567,9 +547,7 @@ class HistoryViewer(EventHandler):
 
         # Draw a frame with a custom banner title.
         log_console.draw_frame(0, 0, log_console.width, log_console.height)
-        log_console.print_box(
-            0, 0, log_console.width, 1, "┤Message history├", alignment=tcod.CENTER
-        )
+        log_console.print_box(0, 0, log_console.width, 1, "┤Message history├", alignment=tcod.CENTER)
 
         # Render the message log using the cursor parameter.
         self.engine.message_log.render_messages(

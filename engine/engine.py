@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-import exceptions
 import lzma
 import pickle
 from typing import TYPE_CHECKING
 
-import render_functions
-from message_log import MessageLog
+import engine.exceptions as exceptions
+import rendering.render_functions as render_functions
+from engine.message_log import MessageLog
 from tcod.console import Console
 from tcod.map import compute_fov
 
 if TYPE_CHECKING:
-    from entity import Actor
-    from game_map import GameMap, GameWorld
+    from entities.entity import Actor
+    from engine.game_map import GameMap, GameWorld
 
 
 class Engine:
@@ -20,11 +20,13 @@ class Engine:
     game_world: GameWorld
 
     def __init__(self, player: Actor):
+
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.player = player
 
     def handle_enemy_turns(self) -> None:
+
         for entity in set(self.game_map.actors) - {self.player}:
             if entity.ai:
                 try:
@@ -55,7 +57,7 @@ class Engine:
         render_functions.render_dungeon_level(
             console=console,
             dungeon_level=self.game_world.current_floor,
-            location=(0, 47)
+            location=(0, 47),
         )
 
         render_functions.render_names_at_mouse_location(console=console, x=21, y=44, engine=self)

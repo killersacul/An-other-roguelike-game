@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import exceptions
+import faulthandler
 import traceback
 
-import color
-import input_handlers
-import setup_game
+import config.color as color
+import engine.exceptions as exceptions
+import engine.input_handlers as input_handlers
+import engine.setup_game as setup_game
 import tcod as tc
 
 
@@ -19,9 +20,7 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
 
-    tileset = tc.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tc.tileset.CHARMAP_TCOD
-        )
+    tileset = tc.tileset.load_tilesheet("media/images/dejavu10x10_gs_tc.png", 32, 8, tc.tileset.CHARMAP_TCOD)
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
@@ -48,9 +47,7 @@ def main() -> None:
                     traceback.print_exc()  # Print error to stderr
                     # Then print the error to the message log.
                     if isinstance(handler, input_handlers.EventHandler):
-                        handler.engine.message_log.add_message(
-                            traceback.format_exc(), color.error
-                        )
+                        handler.engine.message_log.add_message(traceback.format_exc(), color.error)
         except exceptions.QuitWithoutSaving:
             raise
         except SystemExit:  # Save and quit.
@@ -62,4 +59,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    faulthandler.enable()
     main()

@@ -7,15 +7,16 @@ import pickle
 import traceback
 from typing import Optional
 
-import color
-import entity_factories
-import input_handlers
+import config.color as color
+import engine.input_handlers as input_handlers
+import entities.entity_factories as entity_factories
 import tcod
-from engine import Engine
-from game_map import GameWorld
+from engine.engine import Engine
+from engine.game_map import GameWorld
 
 # Load the background image and remove the alpha channel.
-background_image = tcod.image.load("menu_background.png")[:, :, :3]
+# @TODO add new image loading tool as this can't take in paths
+# background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
 
 def new_game() -> Engine:
@@ -42,9 +43,7 @@ def new_game() -> Engine:
     engine.game_world.generate_floor()
     engine.update_fov()
 
-    engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
-    )
+    engine.message_log.add_message("Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text)
 
     dagger = copy.deepcopy(entity_factories.dagger)
     leather_armor = copy.deepcopy(entity_factories.leather_armor)
@@ -74,7 +73,7 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def on_render(self, console: tcod.Console) -> None:
         """Render the main menu on a background image."""
-        console.draw_semigraphics(background_image, 0, 0)
+        # console.draw_semigraphics(background_image, 0, 0)
 
         console.print(
             console.width // 2,
@@ -92,9 +91,7 @@ class MainMenu(input_handlers.BaseEventHandler):
         )
 
         menu_width = 24
-        for i, text in enumerate(
-            ["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]
-        ):
+        for i, text in enumerate(["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]):
             console.print(
                 console.width // 2,
                 console.height // 2 - 2 + i,
@@ -105,9 +102,7 @@ class MainMenu(input_handlers.BaseEventHandler):
                 bg_blend=tcod.BKGND_ALPHA(64),
             )
 
-    def ev_keydown(
-        self, event: tcod.event.KeyDown
-    ) -> Optional[input_handlers.BaseEventHandler]:
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[input_handlers.BaseEventHandler]:
         if event.sym in (tcod.event.K_q, tcod.event.K_ESCAPE):
             raise SystemExit()
         elif event.sym == tcod.event.K_c:

@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from engine import Engine
-    from entity import Entity
-    from game_map import GameMap
+    from engine.engine import Engine
+    from entities.entity import Entity
+    from engine.game_map import GameMap
 
 
 class BaseComponent:

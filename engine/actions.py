@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import exceptions
 from typing import TYPE_CHECKING, Optional, Tuple
 
-import color
+import config.color as color
+import engine.exceptions as exceptions
 
 if TYPE_CHECKING:
-    from engine import Engine
-    from entity import Entity, Actor, Item
+    from engine.engine import Engine
+    from entities.entity import Entity, Actor, Item
 
 
 class Action:
@@ -58,9 +58,7 @@ class PickupAction(Action):
 
 
 class ItemAction(Action):
-    def __init__(
-        self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
-    ):
+    def __init__(self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None):
         super().__init__(entity)
         self.item = item
         if not target_xy:
@@ -108,9 +106,7 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
-            self.engine.message_log.add_message(
-                "You descend the staircase.", color.descend
-            )
+            self.engine.message_log.add_message("You descend the staircase.", color.descend)
         else:
             raise exceptions.Impossible("There are no stairs here.")
 
@@ -159,7 +155,6 @@ class MeleeAction(ActionWithDirection):
 
 
 class MovementAction(ActionWithDirection):
-
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
 

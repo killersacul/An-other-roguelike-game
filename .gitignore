@@ -1,10 +1,10 @@
 # Personal files or folder that don't need to be pushed 
 *.sav
-env/
+.venv/
 requirements.txt
 .pre-commit-config.yaml
 pyproject.toml
-
+.flake8
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
