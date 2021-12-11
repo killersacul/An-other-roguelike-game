@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 import config.color as color
+import tcod as tc
+from config.settings import SCREEN_HEIGHT, SCREEN_WIDTH
 
 if TYPE_CHECKING:
     from tcod import Console
@@ -44,3 +46,33 @@ def render_names_at_mouse_location(console: Console, x: int, y: int, engine: Eng
 
     names_at_mouse_location = get_names_at_location(x=mouse_x, y=mouse_y, game_map=engine.game_map)
     console.print(x=x, y=y, string=names_at_mouse_location)
+
+
+def render_vline(console: Console, x: int, y: int, total_length: int, ch: Optional[str] = "|") -> None:
+    window = tc.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
+    window.draw_rect(
+        x=x,
+        y=y,
+        width=1,
+        height=y + total_length,
+        ch=ord(ch),
+    )
+    window.blit(console, 0, 0, 0, 0, 0, 0, 1.0, 0.7)
+
+
+def render_hline(console: Console, x: int, y: int, total_length: int, ch: Optional[str] = "-") -> None:
+    window = tc.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
+    window.draw_rect(
+        x=x,
+        y=y,
+        width=x + total_length,
+        height=1,
+        ch=ord(ch),
+    )
+    window.blit(console, 0, 0, 0, 0, 0, 0, 1.0, 0.7)
+
+
+def render_game_layout(console: Console, engine: Engine) -> None:
+
+    render_vline(console, 5, 5, 5)
+    render_hline(console, 5, 5, 5)

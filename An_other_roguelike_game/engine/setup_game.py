@@ -11,6 +11,7 @@ import config.color as color
 import engine.input_handlers as input_handlers
 import entities.entity_factories as entity_factories
 import tcod
+from config.settings import MAP_HEIGHT, MAP_WIDTH
 from engine.engine import Engine
 from engine.game_map import GameWorld
 
@@ -21,8 +22,8 @@ from engine.game_map import GameWorld
 
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
-    map_width = 80
-    map_height = 43
+    map_width = MAP_WIDTH
+    map_height = MAP_HEIGHT
 
     room_max_size = 10
     room_min_size = 6
