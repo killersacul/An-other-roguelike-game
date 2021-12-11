@@ -1,6 +1,5 @@
 # Personal files or folder that don't need to be pushed 
 *.sav
-.venv/
 requirements.txt
 .pre-commit-config.yaml
 pyproject.toml
