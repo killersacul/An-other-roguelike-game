@@ -7,6 +7,7 @@ import engine.exceptions as exceptions
 import engine.input_handlers as input_handlers
 import engine.setup_game as setup_game
 import tcod as tc
+from config.settings import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
@@ -17,8 +18,8 @@ def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
 
 
 def main() -> None:
-    screen_width = 100
-    screen_height = 50
+    screen_width = SCREEN_WIDTH
+    screen_height = SCREEN_HEIGHT
 
     tileset = tc.tileset.load_tilesheet("media/images/dejavu10x10_gs_tc.png", 32, 8, tc.tileset.CHARMAP_TCOD)
 

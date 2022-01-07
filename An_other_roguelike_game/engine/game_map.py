@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pprint import pprint
 from typing import TYPE_CHECKING, Iterable, Iterator, Optional
 
 import engine.tile_types as tile_types
@@ -59,6 +60,7 @@ class GameMap:
         If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
         Otherwise, the default is "SHROUD".
         """
+        print(self.width, self.height)
         console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.tiles["light"], self.tiles["dark"]],

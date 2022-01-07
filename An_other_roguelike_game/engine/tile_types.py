@@ -31,7 +31,7 @@ def new_tile(
 
 
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
-
+BORDER = (64, [220, 220, 220], [220, 220, 220])
 
 floor = new_tile(
     walkable=True,

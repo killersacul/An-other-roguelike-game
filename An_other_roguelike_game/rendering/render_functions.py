@@ -3,13 +3,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, Tuple
 
 import config.color as color
+import engine.tile_types as tile_types
+import numpy as np
 import tcod as tc
-from config.settings import SCREEN_HEIGHT, SCREEN_WIDTH
+from config.settings import MAP_HEIGHT, MAP_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH
 
 if TYPE_CHECKING:
     from tcod import Console
     from engine.engine import Engine
     from engine.game_map import GameMap
+    from engine.tile_types import graphic_dt
 
 
 def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
@@ -48,31 +51,32 @@ def render_names_at_mouse_location(console: Console, x: int, y: int, engine: Eng
     console.print(x=x, y=y, string=names_at_mouse_location)
 
 
-def render_vline(console: Console, x: int, y: int, total_length: int, ch: Optional[str] = "|") -> None:
-    window = tc.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
-    window.draw_rect(
-        x=x,
-        y=y,
-        width=1,
-        height=y + total_length,
-        ch=ord(ch),
-    )
-    window.blit(console, 0, 0, 0, 0, 0, 0, 1.0, 0.7)
+def render_vline(
+    console: Console,
+    x: int,
+    y: int,
+    total_length: int,
+    width: Optional[int] = 1,
+    graphic_dt: Optional[graphic_dt] = (64, [220, 220, 220], [220, 220, 220]),
+) -> None:
+    console.tiles_rgb[x : x + total_length, y : y + width] = graphic_dt  # top bar
 
 
-def render_hline(console: Console, x: int, y: int, total_length: int, ch: Optional[str] = "-") -> None:
-    window = tc.console_new(SCREEN_WIDTH, SCREEN_HEIGHT)
-    window.draw_rect(
-        x=x,
-        y=y,
-        width=x + total_length,
-        height=1,
-        ch=ord(ch),
-    )
-    window.blit(console, 0, 0, 0, 0, 0, 0, 1.0, 0.7)
+def render_hline(
+    console: Console,
+    x: int,
+    y: int,
+    total_length: int,
+    width: Optional[int] = 1,
+    graphic_dt: Optional[graphic_dt] = (64, [220, 220, 220], [220, 220, 220]),
+) -> None:
+    console.tiles_rgb[x : x + width, y : y + total_length] = graphic_dt  # bottom bar
 
 
 def render_game_layout(console: Console, engine: Engine) -> None:
-
-    render_vline(console, 5, 5, 5)
-    render_hline(console, 5, 5, 5)
+    render_vline(console, 0, SCREEN_HEIGHT - 1, SCREEN_WIDTH, 1, tile_types.BORDER)
+    render_hline(console, 0, 55, SCREEN_HEIGHT - 55, 1, tile_types.BORDER)
+    render_hline(console, SCREEN_WIDTH - 1, 55, SCREEN_HEIGHT - 55, 1, tile_types.BORDER)
+    render_vline(console, 0, 55, SCREEN_WIDTH, 1, tile_types.BORDER)
+    render_hline(console, 50, 55, 15, 1, tile_types.BORDER)
+    render_hline(console, 100, 55, 15, 1, tile_types.BORDER)
